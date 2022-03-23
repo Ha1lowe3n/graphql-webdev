@@ -6,22 +6,9 @@ import {
     GraphQLInt,
     GraphQLList,
 } from "graphql";
+
 import Director from "../models/director.model.js";
 import Movie from "../models/movie.model.js";
-
-// const movies = [
-//     { id: "1", title: "pogodi", genre: "happy", directorId: 1 },
-//     { id: "2", title: "blood", genre: "horror", directorId: 2 },
-//     { id: "3", title: "spider-man", genre: "fantasic", directorId: 3 },
-//     { id: "4", title: "yolo", genre: "hz", directorId: 1 },
-//     { id: "5", title: "batman", genre: "fantasic", directorId: 1 },
-//     { id: "6", title: "king lion", genre: "multfilm", directorId: 3 },
-// ];
-// const directors = [
-//     { id: "1", name: "Jack", age: 21 },
-//     { id: "2", name: "Bruwse", age: 58 },
-//     { id: "3", name: "Mickle", age: 32 },
-// ];
 
 const MovieType = new GraphQLObjectType({
     name: "Movie",
@@ -65,6 +52,29 @@ const Mutation = new GraphQLObjectType({
                 return Director.create({ ...args });
             },
         },
+        deleteDirector: {
+            type: DirectorType,
+            args: { id: { type: GraphQLID } },
+            resolve(parent, args) {
+                return Director.findByIdAndDelete(args.id);
+            },
+        },
+        updateDirector: {
+            type: DirectorType,
+            args: {
+                id: { type: GraphQLID },
+                name: { type: GraphQLString },
+                age: { type: GraphQLInt },
+            },
+            resolve(parent, args) {
+                console.log(args);
+                return Director.findByIdAndUpdate(
+                    args.id,
+                    { $set: { name: args.name, age: args.age } },
+                    { new: true }
+                );
+            },
+        },
         addMovie: {
             type: MovieType,
             args: {
@@ -74,6 +84,29 @@ const Mutation = new GraphQLObjectType({
             },
             resolve(parent, args) {
                 return Movie.create({ ...args });
+            },
+        },
+        deleteMovie: {
+            type: MovieType,
+            args: { id: { type: GraphQLID } },
+            resolve(parent, args) {
+                return Movie.findByIdAndDelete(args.id);
+            },
+        },
+        updateMovie: {
+            type: MovieType,
+            args: {
+                id: { type: GraphQLID },
+                title: { type: GraphQLString },
+                genre: { type: GraphQLString },
+                directorId: { type: GraphQLID },
+            },
+            resolve(parent, args) {
+                return Movie.findByIdAndUpdate(
+                    args.id,
+                    { $set: { title: args.title, genre: args.genre, directorId: args.directorId } },
+                    { new: true }
+                );
             },
         },
     },
