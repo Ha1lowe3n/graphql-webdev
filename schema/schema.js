@@ -52,6 +52,33 @@ const DirectorType = new GraphQLObjectType({
     }),
 });
 
+const Mutation = new GraphQLObjectType({
+    name: "Mutation",
+    fields: {
+        addDirector: {
+            type: DirectorType,
+            args: {
+                name: { type: GraphQLString },
+                age: { type: GraphQLInt },
+            },
+            resolve(parent, args) {
+                return Director.create({ ...args });
+            },
+        },
+        addMovie: {
+            type: MovieType,
+            args: {
+                title: { type: GraphQLString },
+                genre: { type: GraphQLString },
+                directorId: { type: GraphQLID },
+            },
+            resolve(parent, args) {
+                return Movie.create({ ...args });
+            },
+        },
+    },
+});
+
 const Query = new GraphQLObjectType({
     name: "Query",
     fields: {
@@ -86,4 +113,5 @@ const Query = new GraphQLObjectType({
 
 export default new GraphQLSchema({
     query: Query,
+    mutation: Mutation,
 });
